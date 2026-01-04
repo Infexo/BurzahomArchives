@@ -1,62 +1,52 @@
-// src/components/SearchBar.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, X } from 'lucide-react';
+import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search } from 'lucide-react';
 
-interface SearchBarProps {
+// Add initialQuery to the props interface
+export interface SearchBarProps {
+  initialQuery?: string;  // Add this line
   placeholder?: string;
   className?: string;
 }
 
 export default function SearchBar({ 
-  placeholder = 'Search books, authors, or languages...', 
+  initialQuery = '',     // Add this
+  placeholder = 'Search artifacts, documents, excavation notes...', 
   className = '' 
 }: SearchBarProps) {
+  const [query, setQuery] = useState(initialQuery);  // Use initialQuery here
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get('q') || '');
 
-  useEffect(() => {
-    setQuery(searchParams.get('q') || '');
-  }, [searchParams]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
 
-  const handleClear = () => {
-    setQuery('');
-    router.push('/search');
-  };
-
   return (
     <form onSubmit={handleSubmit} className={`relative ${className}`}>
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-archive-accent" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-stone-400" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-10 py-3 bg-white border border-archive-tan rounded-sm
-                     text-archive-ink placeholder:text-archive-accent
-                     focus:outline-none focus:ring-2 focus:ring-archive-brown focus:border-transparent
-                     transition-all duration-150"
+          className="w-full pl-12 pr-4 py-3 rounded-lg border border-stone-300 
+                     focus:ring-2 focus:ring-amber-500 focus:border-amber-500 
+                     bg-white text-stone-900 placeholder-stone-400"
         />
-        {query && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-archive-accent hover:text-archive-dark"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        )}
+        <button
+          type="submit"
+          className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 
+                     bg-amber-600 text-white rounded-md hover:bg-amber-700 
+                     transition-colors text-sm font-medium"
+        >
+          Search
+        </button>
       </div>
     </form>
   );

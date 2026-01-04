@@ -1,29 +1,27 @@
 import { Suspense } from 'react';
 import SearchPageClient from '@/components/SearchPageClient';
 
-export const dynamic = 'force-dynamic';
-
+// Remove 'force-dynamic' - not compatible with static export
 export const metadata = {
-  title: 'Search Books - Book Archive',
-  description: 'Search through our collection of books',
+  title: 'Search | Burzahom Archives',
+  description: 'Search archaeological records from Burzahom',
 };
 
+// Loading component for Suspense
 function SearchLoading() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="animate-pulse">
-        <div className="h-10 bg-gray-200 rounded w-full max-w-xl mb-8"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-64 bg-gray-200 rounded-lg"></div>
-          ))}
-        </div>
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
+        <p className="mt-4 text-stone-600">Loading search...</p>
       </div>
     </div>
   );
 }
 
 export default function SearchPage() {
+  // For static export, we don't use searchParams from props
+  // Instead, the client component will read them using useSearchParams
   return (
     <Suspense fallback={<SearchLoading />}>
       <SearchPageClient />

@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
 import { RawBookData } from './types';
 
 function getDataDirectory(): string {
@@ -23,15 +22,6 @@ function getDataDirectory(): string {
 export function getDataFilePath(): string {
   const dataDir = getDataDirectory();
   const csvPath = path.join(dataDir, 'books.csv');
-  const xlsxPath = path.join(dataDir, 'books.xlsx');
-
-  if (fs.existsSync(csvPath)) {
-    return csvPath;
-  }
-
-  if (fs.existsSync(xlsxPath)) {
-    return xlsxPath;
-  }
 
   return csvPath;
 }
@@ -47,10 +37,8 @@ export function parseDataFile(filePath: string): RawBookData[] {
 
     if (extension === '.csv') {
       return parseCSV(filePath);
-    } else if (extension === '.xlsx' || extension === '.xls') {
-      return parseXLSX(filePath);
     } else {
-      console.warn(`Unsupported file format: ${extension}`);
+      console.warn(`Unsupported file format: ${extension}. Please use .csv`);
       return getFallbackData();
     }
   } catch (error) {
@@ -84,33 +72,6 @@ function parseCSV(filePath: string): RawBookData[] {
   }
 
   return validData;
-}
-
-function parseXLSX(filePath: string): RawBookData[] {
-  const workbook = XLSX.readFile(filePath);
-  const sheetName = workbook.SheetNames[0];
-  const sheet = workbook.Sheets[sheetName];
-
-  const jsonData = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
-    defval: '',
-  });
-
-  const normalized = jsonData.map((row) => {
-    const result: Record<string, string> = {};
-
-    for (const [key, value] of Object.entries(row)) {
-      const normalizedKey = key.toLowerCase().trim().replace(/\s+/g, '_');
-      result[normalizedKey] = String(value).trim();
-    }
-
-    return result as unknown as RawBookData;
-  }).filter(row => row.title && row.author);
-
-  if (normalized.length === 0) {
-    return getFallbackData();
-  }
-
-  return normalized;
 }
 
 function getFallbackData(): RawBookData[] {
