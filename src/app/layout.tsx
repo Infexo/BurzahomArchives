@@ -6,16 +6,16 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Digital Archive - A Preservation-Focused Library',
-    template: '%s | Digital Archive',
+    default: 'Burzahom Archives - Preserving Kashmir\'s Heritage',
+    template: '%s | Burzahom Archives',
   },
-  description: 'A static, archive-style digital library preserving books across genres, languages, and time periods.',
-  keywords: ['digital library', 'book archive', 'preservation', 'ebooks'],
-  authors: [{ name: 'Digital Archive' }],
+  description: 'A digital archive preserving books, documents, and literature from Kashmir across genres, languages, and time periods.',
+  keywords: ['Kashmir', 'Burzahom', 'digital library', 'book archive', 'Kashmir literature', 'preservation'],
+  authors: [{ name: 'Burzahom Archives' }],
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    siteName: 'Digital Archive',
+    siteName: 'Burzahom Archives',
   },
 };
 

@@ -7,8 +7,8 @@ import SearchBar from '@/components/SearchBar';
 import { BookOpen, Users, FolderOpen, Globe } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Browse Collection | Digital Archive',
-  description: 'Explore our digital archive organized by genre, language, and author.',
+  title: 'Browse Collection | Burzahom Archives',
+  description: 'Explore our digital archive of Kashmir literature organized by genre, language, and author.',
 };
 
 export default function HomePage() {
@@ -31,10 +31,10 @@ export default function HomePage() {
     <div className="archive-container">
       <section className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-serif font-medium text-archive-dark mb-4">
-          Digital Archive
+          Burzahom Archives
         </h1>
         <p className="text-lg text-archive-accent max-w-2xl mx-auto mb-8">
-          A preservation-focused digital library.
+          Preserving Kashmir's literary heritage for future generations.
         </p>
 
         <div className="max-w-xl mx-auto">

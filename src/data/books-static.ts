@@ -1,5 +1,5 @@
 // Auto-generated from books.csv - DO NOT EDIT MANUALLY
-// Generated on: 2026-01-04T08:12:50.524Z
+// Generated on: 2026-01-04T08:34:25.145Z
 
 export interface StaticBook {
   id: string;

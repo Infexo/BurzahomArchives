@@ -8,26 +8,26 @@ export default function Header() {
       <div className="archive-container">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="flex items-center gap-2 text-archive-dark hover:text-archive-brown transition-colors"
           >
             <BookOpen className="h-6 w-6" />
             <span className="text-xl font-serif font-medium">
-              Digital Archive
+              Burzahom Archives
             </span>
           </Link>
 
           {/* Navigation */}
           <nav className="flex items-center gap-6">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-archive-accent hover:text-archive-dark transition-colors"
             >
               Browse
             </Link>
-            <Link 
-              href="/search" 
+            <Link
+              href="/search"
               className="flex items-center gap-1 text-archive-accent hover:text-archive-dark transition-colors"
             >
               <Search className="h-4 w-4" />

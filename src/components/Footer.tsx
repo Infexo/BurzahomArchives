@@ -8,14 +8,14 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-archive-accent text-sm">
             <p>
-              A preservation-focused digital library.
+              Preserving Kashmir's literary heritage for future generations.
             </p>
             <p className="mt-1">
               All texts are provided for educational and archival purposes.
             </p>
           </div>
           <div className="text-archive-accent text-sm">
-            © {currentYear} Digital Archive
+            © {currentYear} Burzahom Archives
           </div>
         </div>
       </div>

@@ -1,10 +1,9 @@
 import { Suspense } from 'react';
 import SearchPageClient from '@/components/SearchPageClient';
 
-// Remove 'force-dynamic' - not compatible with static export
 export const metadata = {
   title: 'Search | Burzahom Archives',
-  description: 'Search archaeological records from Burzahom',
+  description: 'Search books, documents, and literature from Kashmir in the Burzahom Archives',
 };
 
 // Loading component for Suspense
@@ -20,8 +19,6 @@ function SearchLoading() {
 }
 
 export default function SearchPage() {
-  // For static export, we don't use searchParams from props
-  // Instead, the client component will read them using useSearchParams
   return (
     <Suspense fallback={<SearchLoading />}>
       <SearchPageClient />
