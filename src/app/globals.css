@@ -1,0 +1,95 @@
+/* src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-archive-cream text-archive-ink font-serif antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif tracking-tight;
+  }
+
+  ::selection {
+    @apply bg-archive-brown text-archive-cream;
+  }
+}
+
+@layer components {
+  .archive-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .archive-card {
+    @apply bg-white border border-archive-tan rounded-sm shadow-sm 
+           hover:shadow-md transition-shadow duration-200;
+  }
+
+  .archive-link {
+    @apply text-archive-brown hover:text-archive-dark 
+           underline decoration-archive-tan hover:decoration-archive-brown
+           underline-offset-2 transition-colors duration-150;
+  }
+
+  .archive-button {
+    @apply inline-flex items-center justify-center px-4 py-2
+           bg-archive-brown text-archive-cream rounded-sm
+           hover:bg-archive-dark transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-archive-brown focus:ring-offset-2;
+  }
+
+  .archive-button-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2
+           bg-transparent text-archive-brown border border-archive-brown rounded-sm
+           hover:bg-archive-paper transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-archive-brown focus:ring-offset-2;
+  }
+
+  .archive-button-disabled {
+    @apply inline-flex items-center justify-center px-4 py-2
+           bg-archive-tan text-archive-accent rounded-sm
+           cursor-not-allowed opacity-60;
+  }
+
+  .archive-divider {
+    @apply border-t border-archive-tan;
+  }
+
+  .archive-badge {
+    @apply inline-flex items-center px-2 py-0.5 text-xs
+           bg-archive-paper text-archive-accent rounded-sm
+           border border-archive-tan;
+  }
+}
+
+/* Custom scrollbar */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.archive.tan') transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: theme('colors.archive.tan');
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.archive.brown');
+  }
+}
