@@ -1,4 +1,6 @@
 // src/components/Footer.tsx
+import Link from 'next/link'
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -14,6 +16,15 @@ export default function Footer() {
               All texts are provided for educational and archival purposes.
             </p>
           </div>
+          
+          {/* Navigation Links */}
+          <div className="flex gap-6 text-archive-accent text-sm">
+            <Link href="/about" className="hover:underline">
+              About
+            </Link>
+            {/* Add more links as needed */}
+          </div>
+          
           <div className="text-archive-accent text-sm">
             © {currentYear} Burzahom Archives
           </div>
