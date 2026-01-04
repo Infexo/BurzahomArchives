@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: 'Browse Collection | Digital Archive',
   description: 'Explore our digital archive organized by genre, language, and author.',
 };
+export const dynamic = "force-dynamic"
 
 export default function HomePage() {
   const genres = getAllGenres();
