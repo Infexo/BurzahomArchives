@@ -17,16 +17,6 @@ export default function Footer() {
             </p>
           </div>
           
-          {/* Clickable About Link */}
-          <div className="flex gap-4">
-            <Link 
-              href="/about" 
-              className="px-4 py-2 bg-archive-tan text-archive-accent border border-archive-accent hover:bg-archive-accent hover:text-archive-paper transition-colors rounded cursor-pointer"
-            >
-              About
-            </Link>
-          </div>
-          
           <div className="text-archive-accent text-sm">
             © {currentYear} Burzahom Archives
           </div>

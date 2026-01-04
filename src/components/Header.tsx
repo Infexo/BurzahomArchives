@@ -21,10 +21,10 @@ export default function Header() {
           {/* Navigation */}
           <nav className="flex items-center gap-6">
             <Link
-              href="/"
+              href="/about"
               className="text-archive-accent hover:text-archive-dark transition-colors"
             >
-              Browse
+              About
             </Link>
             <Link
               href="/search"
