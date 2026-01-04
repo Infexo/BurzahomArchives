@@ -1,4 +1,6 @@
-// README.md
+
+burzahomearchives.vercel.app
+
 # Digital Archive - Static Book Website
 
 A preservation-focused digital library built with Next.js, TypeScript, and Tailwind CSS.
@@ -18,8 +20,8 @@ Generates entirely from CSV/XLSX at build time and deploys to Vercel.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/book-archive.git
-cd book-archive
+git clone https://github.com/your-username/BurzahomArchives.git
+cd BurzahomArchives
 
 # Install dependencies
 npm install
