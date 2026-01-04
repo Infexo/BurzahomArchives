@@ -1,176 +1,89 @@
+// src/components/SearchPageClient.tsx
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { Book } from '@/lib/types';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import BookCard from './BookCard';
-import { FileQuestion } from 'lucide-react';
+import { Book } from '@/lib/types';
 
-interface SearchPageClientProps {
-  books: Book[];
-  allGenres: string[];
-  allLanguages: string[];
-}
-
-export default function SearchPageClient({ 
-  books, 
-  allGenres, 
-  allLanguages 
-}: SearchPageClientProps) {
-  const router = useRouter();
+export default function SearchPageClient() {
   const searchParams = useSearchParams();
-  const [mounted, setMounted] = useState(false);
+  const query = searchParams.get('q') || '';
+  
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const fetchBooks = async () => {
+      if (!query.trim()) {
+        setBooks([]);
+        return;
+      }
 
-  const query = mounted ? (searchParams.get('q') || '') : '';
-  const genreFilter = mounted ? (searchParams.get('genre') || '') : '';
-  const languageFilter = mounted ? (searchParams.get('language') || '') : '';
+      setLoading(true);
+      setError(null);
 
-  // Filter books based on search
-  const filteredBooks = useMemo(() => {
-    const normalizedQuery = query.toLowerCase().trim();
+      try {
+        // Option 1: Fetch from API route
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch results');
+        }
+        
+        const data = await response.json();
+        setBooks(data.books || []);
+      } catch (err) {
+        setError('Failed to load search results. Please try again.');
+        console.error('Search error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return books.filter(book => {
-      const matchesQuery =
-        !normalizedQuery ||
-        book.title.toLowerCase().includes(normalizedQuery) ||
-        book.author.toLowerCase().includes(normalizedQuery) ||
-        book.languages.some(l => l.toLowerCase().includes(normalizedQuery));
-
-      const matchesGenre =
-        !genreFilter || book.genre.toLowerCase() === genreFilter.toLowerCase();
-
-      const matchesLanguage =
-        !languageFilter || book.languages.some(l => 
-          l.toLowerCase() === languageFilter.toLowerCase()
-        );
-
-      return matchesQuery && matchesGenre && matchesLanguage;
-    });
-  }, [books, query, genreFilter, languageFilter]);
-
-  const updateFilter = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    router.push(`/search?${params.toString()}`);
-  };
-
-  const clearFilters = () => {
-    const params = new URLSearchParams();
-    if (query) params.set('q', query);
-    router.push(`/search?${params.toString()}`);
-  };
-
-  if (!mounted) {
-    return (
-      <div className="animate-pulse">
-        <div className="h-12 bg-archive-paper rounded-sm mb-8 max-w-2xl" />
-        <div className="grid lg:grid-cols-4 gap-8">
-          <div className="h-64 bg-archive-paper rounded-sm" />
-          <div className="lg:col-span-3 space-y-4">
-            <div className="h-32 bg-archive-paper rounded-sm" />
-            <div className="h-32 bg-archive-paper rounded-sm" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const hasFilters = genreFilter || languageFilter;
+    fetchBooks();
+  }, [query]);
 
   return (
-    <>
-      <div className="mb-8 max-w-2xl">
-        <SearchBar />
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Search Books</h1>
+      
+      {/* Search Bar */}
+      <div className="mb-8">
+        <SearchBar initialQuery={query} />
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-8">
-        {/* Sidebar Filters */}
-        <aside className="lg:col-span-1">
-          <div className="bg-white border border-archive-tan rounded-sm p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-archive-dark">Filters</h3>
-              {hasFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="text-sm text-archive-brown hover:text-archive-dark"
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-archive-accent mb-2">
-                Genre
-              </label>
-              <select
-                value={genreFilter}
-                onChange={(e) => updateFilter('genre', e.target.value)}
-                className="w-full px-3 py-2 bg-archive-paper border border-archive-tan rounded-sm
-                           focus:outline-none focus:ring-2 focus:ring-archive-brown"
-              >
-                <option value="">All Genres</option>
-                {allGenres.map((genre) => (
-                  <option key={genre} value={genre}>{genre}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-archive-accent mb-2">
-                Language
-              </label>
-              <select
-                value={languageFilter}
-                onChange={(e) => updateFilter('language', e.target.value)}
-                className="w-full px-3 py-2 bg-archive-paper border border-archive-tan rounded-sm
-                           focus:outline-none focus:ring-2 focus:ring-archive-brown"
-              >
-                <option value="">All Languages</option>
-                {allLanguages.map((language) => (
-                  <option key={language} value={language}>{language}</option>
-                ))}
-              </select>
-            </div>
+      {/* Results Section */}
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      ) : error ? (
+        <div className="text-center py-12">
+          <p className="text-red-500">{error}</p>
+        </div>
+      ) : query && books.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No books found for "{query}"</p>
+        </div>
+      ) : books.length > 0 ? (
+        <>
+          <p className="text-gray-600 mb-4">
+            Found {books.length} result{books.length !== 1 ? 's' : ''} for "{query}"
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {books.map((book) => (
+              <BookCard key={book.slug || book.id} book={book} />
+            ))}
           </div>
-        </aside>
-
-        {/* Results */}
-        <section className="lg:col-span-3">
-          {filteredBooks.length === 0 ? (
-            <div className="text-center py-12">
-              <FileQuestion className="h-16 w-16 text-archive-tan mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-archive-dark mb-2">
-                No books found
-              </h3>
-              <p className="text-archive-accent">
-                {query ? `No results for "${query}".` : 'Try searching for a title or author.'}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-sm text-archive-accent">
-                Found {filteredBooks.length} {filteredBooks.length === 1 ? 'book' : 'books'}
-                {query && ` for "${query}"`}
-              </p>
-              <div className="grid gap-4">
-                {filteredBooks.map((book) => (
-                  <BookCard key={book.id} book={book} showGenre />
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
-      </div>
-    </>
+        </>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-gray-500">Enter a search term to find books</p>
+        </div>
+      )}
+    </div>
   );
 }
