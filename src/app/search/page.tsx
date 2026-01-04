@@ -16,7 +16,6 @@ export const metadata: Metadata = {
 interface SearchPageProps {
   searchParams: { q?: string; genre?: string; language?: string };
 }
-export const dynamic = "force-dynamic"
 
 export default function SearchPage({ searchParams }: SearchPageProps) {
   const { allGenres, allLanguages } = getArchiveData();
