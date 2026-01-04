@@ -8,7 +8,7 @@ import DownloadButton from '@/components/DownloadButton';
 import { Calendar, User, Globe, FolderOpen, ArrowLeft } from 'lucide-react';
 
 interface BookPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -19,7 +19,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: BookPageProps): Promise<Metadata> {
-  const book = getBookBySlug(params.slug);
+  const { slug } = await params;
+  const book = getBookBySlug(slug);
 
   if (!book) {
     return { title: 'Book Not Found' };
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
 
   return {
     title: `${book.title} by ${book.author}`,
-    description: book.description || `${book.title} by ${book.author} - Available in the Digital Archive.`,
+    description: book.description || `${book.title} by ${book.author} - Available in the Burzahom Archives.`,
     openGraph: {
       title: book.title,
       description: book.description || `By ${book.author}`,
@@ -36,8 +37,9 @@ export async function generateMetadata({ params }: BookPageProps): Promise<Metad
   };
 }
 
-export default function BookPage({ params }: BookPageProps) {
-  const book = getBookBySlug(params.slug);
+export default async function BookPage({ params }: BookPageProps) {
+  const { slug } = await params;
+  const book = getBookBySlug(slug);
 
   if (!book) {
     notFound();
@@ -138,7 +140,7 @@ export default function BookPage({ params }: BookPageProps) {
           {/* Reserved space for future link */}
           <div className="mt-4 pt-4 border-t border-archive-tan">
             <p className="text-xs text-archive-accent">
-              External links open in a new window. The Digital Archive does not host files directly.
+              External links open in a new window. Burzahom Archives does not host files directly.
             </p>
           </div>
         </section>

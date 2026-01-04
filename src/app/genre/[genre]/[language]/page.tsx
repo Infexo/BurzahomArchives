@@ -1,20 +1,19 @@
-// src/app/genre/[genre]/[language]/page.tsx
+/// src/app/genre/[genre]/[language]/page.tsx
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import {
   getAllGenres,
   getGenreBySlug,
   getLanguageInGenre,
   getBooksInGenreAndLanguage,
 } from '@/lib/data';
-import { pluralize, unslugify } from '@/lib/utils';
+import { pluralize } from '@/lib/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 import AuthorCard from '@/components/AuthorCard';
 import BookCard from '@/components/BookCard';
 
 interface LanguagePageProps {
-  params: { genre: string; language: string };
+  params: Promise<{ genre: string; language: string }>;
 }
 
 export async function generateStaticParams() {
@@ -34,8 +33,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: LanguagePageProps): Promise<Metadata> {
-  const genre = getGenreBySlug(params.genre);
-  const language = getLanguageInGenre(params.genre, params.language);
+  const { genre: genreSlug, language: languageSlug } = await params;
+  const genre = getGenreBySlug(genreSlug);
+  const language = getLanguageInGenre(genreSlug, languageSlug);
 
   if (!genre || !language) {
     return { title: 'Not Found' };
@@ -47,10 +47,11 @@ export async function generateMetadata({ params }: LanguagePageProps): Promise<M
   };
 }
 
-export default function LanguagePage({ params }: LanguagePageProps) {
-  const genre = getGenreBySlug(params.genre);
-  const language = getLanguageInGenre(params.genre, params.language);
-  const books = getBooksInGenreAndLanguage(params.genre, params.language);
+export default async function LanguagePage({ params }: LanguagePageProps) {
+  const { genre: genreSlug, language: languageSlug } = await params;
+  const genre = getGenreBySlug(genreSlug);
+  const language = getLanguageInGenre(genreSlug, languageSlug);
+  const books = getBooksInGenreAndLanguage(genreSlug, languageSlug);
 
   if (!genre || !language) {
     notFound();

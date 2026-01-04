@@ -2,12 +2,12 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAllGenres, getGenreBySlug } from '@/lib/data';
-import { unslugify, pluralize } from '@/lib/utils';
+import { pluralize } from '@/lib/utils';
 import Breadcrumb from '@/components/Breadcrumb';
 import LanguageCard from '@/components/LanguageCard';
 
 interface GenrePageProps {
-  params: { genre: string };
+  params: Promise<{ genre: string }>;
 }
 
 export async function generateStaticParams() {
@@ -18,7 +18,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: GenrePageProps): Promise<Metadata> {
-  const genre = getGenreBySlug(params.genre);
+  const { genre: genreSlug } = await params;
+  const genre = getGenreBySlug(genreSlug);
   
   if (!genre) {
     return { title: 'Genre Not Found' };
@@ -30,8 +31,9 @@ export async function generateMetadata({ params }: GenrePageProps): Promise<Meta
   };
 }
 
-export default function GenrePage({ params }: GenrePageProps) {
-  const genre = getGenreBySlug(params.genre);
+export default async function GenrePage({ params }: GenrePageProps) {
+  const { genre: genreSlug } = await params;
+  const genre = getGenreBySlug(genreSlug);
 
   if (!genre) {
     notFound();

@@ -8,7 +8,7 @@ import BookCard from '@/components/BookCard';
 import { Globe, FolderOpen } from 'lucide-react';
 
 interface AuthorPageProps {
-  params: { author: string };
+  params: Promise<{ author: string }>;
 }
 
 export async function generateStaticParams() {
@@ -19,7 +19,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: AuthorPageProps): Promise<Metadata> {
-  const author = getAuthorBySlug(params.author);
+  const { author: authorSlug } = await params;
+  const author = getAuthorBySlug(authorSlug);
 
   if (!author) {
     return { title: 'Author Not Found' };
@@ -31,8 +32,9 @@ export async function generateMetadata({ params }: AuthorPageProps): Promise<Met
   };
 }
 
-export default function AuthorPage({ params }: AuthorPageProps) {
-  const author = getAuthorBySlug(params.author);
+export default async function AuthorPage({ params }: AuthorPageProps) {
+  const { author: authorSlug } = await params;
+  const author = getAuthorBySlug(authorSlug);
 
   if (!author) {
     notFound();
