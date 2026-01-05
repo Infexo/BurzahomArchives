@@ -35,7 +35,8 @@ function transformRawData(rawData: RawBookData[]): Book[] {
       languageSlugs: languages.map(l => slugify(l)),
       year: parseYear(row.year),
       description: row.description || undefined,
-      megaLink: parseMegaLink(row.mega_link),
+      // Check archive_link OR download_url OR mega_link
+megaLink: parseMegaLink((row as any).archive_link || (row as any).download_url || row.mega_link),
     };
   });
 }

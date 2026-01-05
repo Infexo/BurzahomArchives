@@ -7,6 +7,8 @@ export interface RawBookData {
   year?: string | number;
   description?: string;
   mega_link?: string;
+  archive_link?: string; // Add this
+  download_url?: string; 
 }
 
 export interface Book {
