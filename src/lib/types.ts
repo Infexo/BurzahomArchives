@@ -7,6 +7,8 @@ export interface RawBook {
   language: string;
   url: string | null;
 }
+export type MegaLinkStatus = 'available' | 'processing' | 'unavailable';
+
 
 export interface Book {
   title: string;
