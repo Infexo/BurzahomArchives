@@ -7,6 +7,13 @@ export interface RawBook {
   language: string;
   url: string | null;
 }
+// src/lib/types.ts
+
+export type MegaLinkStatus =
+  | { type: 'available'; url: string }
+  | { type: 'coming_soon' }
+  | { type: 'unavailable' };
+
 
 export interface Book {
   title: string;

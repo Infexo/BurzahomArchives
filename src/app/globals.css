@@ -70,3 +70,41 @@
     border: 2px solid white;
   }
 }
+/* ---------- CUSTOM SVG CURSOR (THICK + WHITE) ---------- */
+
+:root {
+  /* PLUS */
+  --cursor-plus: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'>\
+<line x1='12' y1='4' x2='12' y2='20'/>\
+<line x1='4' y1='12' x2='20' y2='12'/>\
+</svg>");
+
+  /* X */
+  --cursor-x: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'>\
+<line x1='19' y1='5' x2='5' y2='19'/>\
+<line x1='5' y1='5' x2='19' y2='19'/>\
+</svg>");
+}
+
+/* Default: PLUS */
+* {
+  cursor: var(--cursor-plus) 16 16, auto;
+}
+
+/* Interactive: X */
+a,
+button,
+[role="button"],
+input,
+textarea {
+  cursor: var(--cursor-x) 16 16, pointer;
+}
+
+/* Disable on touch devices */
+@media (hover: none) {
+  * {
+    cursor: auto !important;
+  }
+}

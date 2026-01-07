@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllAuthors } from '@/lib/data';
+import { getAllAuthors, getAllBooks } from '@/lib/data';
 import { Users } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
 
@@ -10,7 +10,15 @@ export const metadata: Metadata = {
 };
 
 export default function AllAuthorsPage() {
-  const authors = getAllAuthors();
+  const books = getAllBooks();
+
+const authors = getAllAuthors().map(author => ({
+  ...author,
+  bookCount: books.filter(
+    book => book.author === author.name
+  ).length,
+}));
+
 
   // Sort A-Z
   const sortedAuthors = [...authors].sort((a, b) => 
