@@ -4,6 +4,7 @@
 // 1. IMPORT REAL DATA
 // --------------------------------------------------------
 import rawBooks from '../../data/books.json';
+
 // --------------------------------------------------------
 // 2. HELPERS
 // --------------------------------------------------------
@@ -54,24 +55,22 @@ export const getGenreBySlug = (slug: string) => {
   return getAllGenres().find(g => g.slug === slug);
 };
 
-export const getBooksByGenre = (slug: string) => {
-  const genreObj = getGenreBySlug(slug);
-  if (!genreObj) return [];
-
-  return getAllBooks().filter(b => b.genre === genreObj.name);
-};
-
-export const getBookBySlug = (slug: string) => {
-  return getAllBooks().find(b => b.slug === slug);
-};
-
 export const getAuthorBySlug = (slug: string) => {
   return getAllAuthors().find(a => a.slug === slug);
 };
 
-export const getBooksByAuthor = (slug: string) => {
-  const authorObj = getAuthorBySlug(slug);
-  if (!authorObj) return [];
+export const getBooksByGenre = (slug: string) => {
+  return getAllBooks().filter(
+    b => getSlug(b.genre) === slug
+  );
+};
 
-  return getAllBooks().filter(b => b.author === authorObj.name);
+export const getBooksByAuthor = (slug: string) => {
+  return getAllBooks().filter(
+    b => getSlug(b.author) === slug
+  );
+};
+
+export const getBookBySlug = (slug: string) => {
+  return getAllBooks().find(b => b.slug === slug);
 };
