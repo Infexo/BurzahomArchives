@@ -1,75 +1,77 @@
 // src/components/BookCard.tsx
+
 import Link from 'next/link';
-import { Book as BookType } from '@/lib/types';
-import { BookOpen, Calendar, ExternalLink, Clock, AlertCircle } from 'lucide-react';
+import { Book } from '@/lib/types';
+import { BookOpen, Download, User, Globe, Tag, XCircle } from 'lucide-react';
 
 interface BookCardProps {
-  book: BookType;
+  book: Book;
   showGenre?: boolean;
 }
 
 export default function BookCard({ book, showGenre = false }: BookCardProps) {
-  const getLinkStatusIcon = () => {
-    switch (book.megaLink.type) {
-      case 'available':
-        return <ExternalLink className="h-4 w-4 text-green-600" />;
-      case 'coming_soon':
-        return <Clock className="h-4 w-4 text-amber-600" />;
-      case 'unavailable':
-        return <AlertCircle className="h-4 w-4 text-archive-accent" />;
-    }
-  };
+  const hasDownload = book.url !== null;
 
   return (
-    <Link href={`/book/${book.slug}`} className="block archive-card p-5 group">
-      <div className="flex items-start gap-4">
-        <div className="p-2 bg-archive-paper rounded-sm text-archive-brown 
-                        group-hover:bg-archive-brown group-hover:text-archive-cream 
-                        transition-colors duration-200 shrink-0">
-          <BookOpen className="h-5 w-5" />
-        </div>
-        
+    <div className="bg-white border border-archive-tan rounded-sm p-4 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="font-medium text-archive-dark group-hover:text-archive-brown 
-                           transition-colors line-clamp-2">
-              {book.title}
-            </h3>
-            {getLinkStatusIcon()}
+          {/* Title */}
+          <h3 className="font-serif font-medium text-archive-dark text-lg mb-2 truncate">
+            {book.title}
+          </h3>
+
+          {/* Author */}
+          <div className="flex items-center gap-2 text-sm text-archive-accent mb-2">
+            <User className="h-4 w-4 flex-shrink-0" />
+            <Link
+              href={`/author/${book.authorSlug}`}
+              className="hover:text-archive-brown transition-colors truncate"
+            >
+              {book.author}
+            </Link>
           </div>
-          
-          <p className="text-sm text-archive-accent mt-1">
-            by {book.author}
-          </p>
-          
-          <div className="flex flex-wrap items-center gap-2 mt-2">
-            {book.year && (
-              <span className="flex items-center gap-1 text-xs text-archive-accent">
-                <Calendar className="h-3 w-3" />
-                {book.year}
-              </span>
-            )}
-            
-            {showGenre && (
-              <span className="archive-badge">
+
+          {/* Language */}
+          <div className="flex items-center gap-2 text-sm text-archive-accent mb-2">
+            <Globe className="h-4 w-4 flex-shrink-0" />
+            <span>{book.language}</span>
+          </div>
+
+          {/* Genre (optional) */}
+          {showGenre && (
+            <div className="flex items-center gap-2 text-sm text-archive-accent">
+              <Tag className="h-4 w-4 flex-shrink-0" />
+              <Link
+                href={`/genre/${book.genreSlug}`}
+                className="hover:text-archive-brown transition-colors"
+              >
                 {book.genre}
-              </span>
-            )}
-            
-            {book.languages.map((lang) => (
-              <span key={lang} className="archive-badge">
-                {lang}
-              </span>
-            ))}
-          </div>
-          
-          {book.description && (
-            <p className="text-sm text-archive-accent mt-3 line-clamp-2">
-              {book.description}
-            </p>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Download Button */}
+        <div className="flex-shrink-0">
+          {hasDownload ? (
+            <a
+              href={book.url!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 bg-archive-brown text-white rounded-sm hover:bg-archive-dark transition-colors text-sm"
+            >
+              <Download className="h-4 w-4" />
+              <span>Download</span>
+            </a>
+          ) : (
+            <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-200 text-gray-500 rounded-sm text-sm cursor-not-allowed">
+              <XCircle className="h-4 w-4" />
+              <span>Not Available</span>
+            </div>
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

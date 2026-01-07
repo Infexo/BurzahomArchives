@@ -36,7 +36,7 @@ export default function SearchResults({ books, query }: SearchResultsProps) {
       
       <div className="grid gap-4">
         {books.map((book) => (
-          <BookCard key={book.id} book={book} showGenre />
+          <BookCard key={book.slug} book={book} showGenre />
         ))}
       </div>
     </div>

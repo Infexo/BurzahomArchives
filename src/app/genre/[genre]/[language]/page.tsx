@@ -95,7 +95,7 @@ export default async function LanguagePage({ params }: LanguagePageProps) {
           </h2>
           <div className="space-y-4">
             {books.map((book) => (
-              <BookCard key={book.id} book={book} />
+              <BookCard key={book.slug} book={book} />
             ))}
           </div>
         </section>

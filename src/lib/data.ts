@@ -1,44 +1,55 @@
-import { parseDataFile, getDataFilePath } from './parser';
+// src/lib/data.ts
+
+import fs from 'fs';
+import path from 'path';
 import {
   Book,
   Genre,
   Author,
   ArchiveData,
+  RawBook,
   LanguageInGenre,
-  AuthorInLanguage,
-  RawBookData,
 } from './types';
-import {
-  slugify,
-  createBookSlug,
-  parseMegaLink,
-  parseLanguages,
-  parseYear,
-  generateBookId,
-} from './utils';
 
 let cachedData: ArchiveData | null = null;
 
-function transformRawData(rawData: RawBookData[]): Book[] {
-  return rawData.map((row, index) => {
-    const languages = parseLanguages(row.language);
+// Simple slugify function
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
 
-    return {
-      id: generateBookId(row.title, row.author, index),
-      slug: createBookSlug(row.title, row.author),
-      title: row.title,
-      author: row.author,
-      authorSlug: slugify(row.author),
-      genre: row.genre || 'Uncategorized',
-      genreSlug: slugify(row.genre || 'Uncategorized'),
-      languages,
-      languageSlugs: languages.map(l => slugify(l)),
-      year: parseYear(row.year),
-      description: row.description || undefined,
-      // Check archive_link OR download_url OR mega_link
-megaLink: parseMegaLink((row as any).archive_link || (row as any).download_url || row.mega_link),
-    };
-  });
+function createBookSlug(title: string, author: string): string {
+  const titlePart = slugify(title).slice(0, 50);
+  const authorPart = slugify(author).slice(0, 20);
+  return `${titlePart}-${authorPart}`;
+}
+
+function loadBooksFromJSON(): RawBook[] {
+  const filePath = path.join(process.cwd(), 'data', 'books.json');
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  return JSON.parse(fileContent);
+}
+
+function transformRawData(rawData: RawBook[]): Book[] {
+  return rawData.map((row) => ({
+    title: row.title,
+    slug: createBookSlug(row.title, row.author),
+    author: row.author,
+    authorSlug: slugify(row.author),
+    genre: row.genre || 'Uncategorized',
+    genreSlug: slugify(row.genre || 'Uncategorized'),
+    language: row.language || 'Unknown',
+    languageSlug: slugify(row.language || 'Unknown'),
+    url: row.url || null,
+  }));
 }
 
 function buildGenreHierarchy(books: Book[]): Genre[] {
@@ -66,30 +77,28 @@ function buildGenreHierarchy(books: Book[]): Genre[] {
     const genre = genreMap.get(book.genreSlug)!;
     genre.count++;
 
-    for (let i = 0; i < book.languages.length; i++) {
-      const langName = book.languages[i];
-      const langSlug = book.languageSlugs[i];
+    const langSlug = book.languageSlug;
+    const langName = book.language;
 
-      if (!genre.languages.has(langSlug)) {
-        genre.languages.set(langSlug, {
-          name: langName,
-          slug: langSlug,
-          authors: new Map(),
-          count: 0,
-        });
-      }
-      const language = genre.languages.get(langSlug)!;
-      language.count++;
-
-      if (!language.authors.has(book.authorSlug)) {
-        language.authors.set(book.authorSlug, {
-          name: book.author,
-          slug: book.authorSlug,
-          count: 0,
-        });
-      }
-      language.authors.get(book.authorSlug)!.count++;
+    if (!genre.languages.has(langSlug)) {
+      genre.languages.set(langSlug, {
+        name: langName,
+        slug: langSlug,
+        authors: new Map(),
+        count: 0,
+      });
     }
+    const language = genre.languages.get(langSlug)!;
+    language.count++;
+
+    if (!language.authors.has(book.authorSlug)) {
+      language.authors.set(book.authorSlug, {
+        name: book.author,
+        slug: book.authorSlug,
+        count: 0,
+      });
+    }
+    language.authors.get(book.authorSlug)!.count++;
   }
 
   return Array.from(genreMap.values())
@@ -138,10 +147,8 @@ function buildAuthorIndex(books: Book[]): Author[] {
       author.genres.push(book.genre);
     }
 
-    for (const lang of book.languages) {
-      if (!author.languages.includes(lang)) {
-        author.languages.push(lang);
-      }
+    if (!author.languages.includes(book.language)) {
+      author.languages.push(book.language);
     }
   }
 
@@ -153,9 +160,7 @@ function buildAuthorIndex(books: Book[]): Author[] {
 function extractUniqueLanguages(books: Book[]): string[] {
   const languages = new Set<string>();
   for (const book of books) {
-    for (const lang of book.languages) {
-      languages.add(lang);
-    }
+    languages.add(book.language);
   }
   return Array.from(languages).sort();
 }
@@ -174,8 +179,7 @@ export function getArchiveData(): ArchiveData {
   }
 
   try {
-    const dataFilePath = getDataFilePath();
-    const rawData = parseDataFile(dataFilePath);
+    const rawData = loadBooksFromJSON();
     const books = transformRawData(rawData);
 
     cachedData = {
@@ -238,13 +242,13 @@ export function getBooksInGenreAndLanguage(
   return getArchiveData().books.filter(
     book =>
       book.genreSlug === genreSlug &&
-      book.languageSlugs.includes(languageSlug)
+      book.languageSlug === languageSlug
   );
 }
 
 export function searchBooks(
   query: string,
-  filters?: { genre?: string; language?: string }
+  filters?: { genre?: string; language?: string; author?: string }
 ): Book[] {
   const normalizedQuery = query.toLowerCase().trim();
 
@@ -252,15 +256,17 @@ export function searchBooks(
     const matchesQuery =
       !normalizedQuery ||
       book.title.toLowerCase().includes(normalizedQuery) ||
-      book.author.toLowerCase().includes(normalizedQuery) ||
-      book.languages.some(l => l.toLowerCase().includes(normalizedQuery));
+      book.author.toLowerCase().includes(normalizedQuery);
 
     const matchesGenre =
       !filters?.genre || book.genreSlug === filters.genre;
 
     const matchesLanguage =
-      !filters?.language || book.languageSlugs.includes(filters.language);
+      !filters?.language || book.languageSlug === filters.language;
 
-    return matchesQuery && matchesGenre && matchesLanguage;
+    const matchesAuthor =
+      !filters?.author || book.authorSlug === filters.author;
+
+    return matchesQuery && matchesGenre && matchesLanguage && matchesAuthor;
   });
 }

@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { getAllGenres, getAllBooks, getAllAuthors } from '@/lib/data';
-import GenreCard from '@/components/GenreCard';
 import SearchBar from '@/components/SearchBar';
+import BrowseSection from '@/components/BrowseSection';
 import { BookOpen, Users, FolderOpen, Globe } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -16,19 +16,19 @@ export default function HomePage() {
   const books = getAllBooks();
   const authors = getAllAuthors();
 
-  const languageSet = new Set<string>();
-  books.forEach(book => book.languages.forEach(lang => languageSet.add(lang)));
-  const languageCount = languageSet.size;
+  // Get unique languages
+  const languages = [...new Set(books.map(book => book.language))];
 
   const stats = [
     { label: 'Books', value: books.length, icon: BookOpen },
     { label: 'Authors', value: authors.length, icon: Users },
     { label: 'Genres', value: genres.length, icon: FolderOpen },
-    { label: 'Languages', value: languageCount, icon: Globe },
+    { label: 'Languages', value: languages.length, icon: Globe },
   ];
 
   return (
     <div className="archive-container">
+      {/* Header */}
       <section className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-serif font-medium text-archive-dark mb-4">
           Burzahom Archives
@@ -44,6 +44,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Stats */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {stats.map(({ label, value, icon: Icon }) => (
           <div
@@ -59,25 +60,38 @@ export default function HomePage() {
         ))}
       </section>
 
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-serif font-medium text-archive-dark">
-            Browse by Genre
-          </h2>
-          <Link
-            href="/search"
-            className="text-archive-brown hover:text-archive-dark transition-colors"
-          >
-            View all books →
-          </Link>
-        </div>
+      {/* Browse Sections - Clean Dropdowns */}
+<section className="space-y-4">
+  <h2 className="text-2xl font-serif font-medium text-archive-dark mb-6">
+    Browse Collection
+  </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {genres.map((genre) => (
-            <GenreCard key={genre.slug} genre={genre} />
-          ))}
-        </div>
-      </section>
+  <BrowseSection
+    title="Browse by Genre"
+    iconType="genre"
+    items={genres.map(g => ({ name: g.name, slug: g.slug, count: g.bookCount }))}
+    basePath="/genre"
+  />
+
+  <BrowseSection
+    title="Browse by Author"
+    iconType="author"
+    items={authors.slice(0, 20).map(a => ({ name: a.name, slug: a.slug, count: a.bookCount }))}
+    basePath="/author"
+    showMore={{ href: '/authors', label: `View all ${authors.length} authors` }}
+  />
+
+  <BrowseSection
+    title="Browse by Language"
+    iconType="language"
+    items={languages.map(lang => ({
+      name: lang,
+      slug: lang.toLowerCase(),
+      count: books.filter(b => b.language === lang).length
+    }))}
+    basePath="/language"
+  />
+</section>
     </div>
   );
 }

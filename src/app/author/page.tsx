@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 export default function AllAuthorsPage() {
   const authors = getAllAuthors();
 
-  // Sort authors alphabetically by name
+  // Sort A-Z
   const sortedAuthors = [...authors].sort((a, b) => 
     a.name.localeCompare(b.name)
   );
 
-  // Group by first letter (A, B, C...)
+  // Group by Letter
   const groupedAuthors = sortedAuthors.reduce((acc, author) => {
     const firstLetter = author.name.charAt(0).toUpperCase();
     if (!acc[firstLetter]) acc[firstLetter] = [];
@@ -48,7 +48,7 @@ export default function AllAuthorsPage() {
         </div>
       </div>
 
-      {/* A-Z Navigation Filter */}
+      {/* Letters Filter */}
       <div className="flex flex-wrap gap-2 mb-8 p-4 bg-white border border-archive-tan rounded-sm">
         {letters.map((letter) => (
           <a
@@ -61,14 +61,13 @@ export default function AllAuthorsPage() {
         ))}
       </div>
 
-      {/* Authors Grid */}
+      {/* List */}
       <div className="space-y-12">
         {letters.map((letter) => (
           <div key={letter} id={letter} className="scroll-mt-24">
             <h2 className="text-2xl font-serif font-medium text-archive-dark border-b border-archive-tan pb-2 mb-6">
               {letter}
             </h2>
-            
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {groupedAuthors[letter].map((author) => (
                 <Link

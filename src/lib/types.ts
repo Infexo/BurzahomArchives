@@ -1,35 +1,24 @@
 // src/lib/types.ts
-export interface RawBookData {
+
+export interface RawBook {
   title: string;
   author: string;
   genre: string;
   language: string;
-  year?: string | number;
-  description?: string;
-  mega_link?: string;
-  archive_link?: string; // Add this
-  download_url?: string; 
+  url: string | null;
 }
 
 export interface Book {
-  id: string;
-  slug: string;
   title: string;
+  slug: string;
   author: string;
   authorSlug: string;
   genre: string;
   genreSlug: string;
-  languages: string[];
-  languageSlugs: string[];
-  year?: number;
-  description?: string;
-  megaLink: MegaLinkStatus;
+  language: string;
+  languageSlug: string;
+  url: string | null;
 }
-
-export type MegaLinkStatus = 
-  | { type: 'available'; url: string }
-  | { type: 'coming_soon' }
-  | { type: 'unavailable' };
 
 export interface Genre {
   name: string;
@@ -58,12 +47,6 @@ export interface Author {
   genres: string[];
   languages: string[];
   books: Book[];
-}
-
-export interface SearchFilters {
-  query?: string;
-  genre?: string;
-  language?: string;
 }
 
 export interface ArchiveData {
