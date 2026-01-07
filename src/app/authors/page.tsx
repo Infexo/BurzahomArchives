@@ -72,7 +72,7 @@ export default function AllAuthorsPage() {
               {groupedAuthors[letter].map((author) => (
                 <Link
                   key={author.slug}
-                  href={`/author/${author.slug}`}
+                  href={`/authors/${author.slug}`}
                   className="group flex justify-between items-center p-4 bg-white border border-archive-tan rounded-sm hover:border-archive-brown transition-colors"
                 >
                   <span className="font-medium text-archive-dark group-hover:text-archive-brown transition-colors">

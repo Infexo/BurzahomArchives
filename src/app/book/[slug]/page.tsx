@@ -46,7 +46,7 @@ export default async function BookPage({ params }: BookPageProps) {
   }
 
   const metadata = [
-    { label: 'Author', value: book.author, icon: User, href: `/author/${book.authorSlug}` },
+    { label: 'Author', value: book.author, icon: User, href: `/authors/${book.authorSlug}` },
     { label: 'Genre', value: book.genre, icon: FolderOpen, href: `/genre/${book.genreSlug}` },
     { label: 'Language', value: book.languages.join(', '), icon: Globe },
     ...(book.year ? [{ label: 'Year', value: book.year.toString(), icon: Calendar }] : []),

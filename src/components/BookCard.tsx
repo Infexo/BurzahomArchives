@@ -25,7 +25,7 @@ export default function BookCard({ book, showGenre = false }: BookCardProps) {
           <div className="flex items-center gap-2 text-sm text-archive-accent mb-2">
             <User className="h-4 w-4 flex-shrink-0" />
             <Link
-              href={`/author/${book.authorSlug}`}
+              href={`/authors/${book.authorSlug}`}
               className="hover:text-archive-brown transition-colors truncate"
             >
               {book.author}
