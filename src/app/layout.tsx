@@ -1,22 +1,10 @@
-// src/app/layout.tsx
 import type { Metadata } from 'next';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import './globals.css';
+import ClientLayout from '@/components/ClientLayout'; // Import the header/wrapper
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Burzahom Archives - Preserving Kashmir\'s Heritage',
-    template: '%s | Burzahom Archives',
-  },
-  description: 'A digital archive preserving books, documents, and literature from Kashmir across genres, languages, and time periods.',
-  keywords: ['Kashmir', 'Burzahom', 'digital library', 'book archive', 'Kashmir literature', 'preservation'],
-  authors: [{ name: 'Burzahom Archives' }],
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    siteName: 'Burzahom Archives',
-  },
+  title: 'Burzahom Archives',
+  description: 'Digital Archive of Kashmir Literature',
 };
 
 export default function RootLayout({
@@ -25,13 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 py-8">
+    <html lang="en" suppressHydrationWarning>
+      {/* GLOBAL STYLES: font-mono and uppercase to match the AI look */}
+      <body className="font-mono uppercase bg-white text-black antialiased selection:bg-black selection:text-white">
+        <ClientLayout>
           {children}
-        </main>
-        <Footer />
+        </ClientLayout>
       </body>
     </html>
   );
