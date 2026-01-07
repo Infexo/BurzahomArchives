@@ -1,3 +1,13 @@
+import { getAllAuthors } from '@/lib/data';
+
+export function generateStaticParams() {
+  const authors = getAllAuthors();
+
+  return authors.map(author => ({
+    author: author.slug,
+  }));
+}
+
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
