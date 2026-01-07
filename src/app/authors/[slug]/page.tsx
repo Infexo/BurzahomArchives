@@ -1,48 +1,53 @@
-import { getAllAuthors } from '@/lib/data';
+import React from 'react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import {
+  getAllAuthors,
+  getAuthorBySlug,
+  getBooksByAuthor,
+  getSlug,
+} from '@/lib/data';
+
+type Props = {
+  params: { slug: string };
+};
 
 export function generateStaticParams() {
   const authors = getAllAuthors();
-
   return authors.map(author => ({
     slug: author.slug,
   }));
 }
 
-import React from 'react';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getAuthorBySlug, getBooksByAuthor, getSlug, getAllAuthors } from '@/lib/data';
-
-type Props = {
-  params: Promise<{ slug: string }>;
-};
-
-export default async function AuthorPage({ params }: Props) {
-  const { slug } = await params;
-  const author = getAuthorBySlug(slug);
+export default function AuthorPage({ params }: Props) {
+  const author = getAuthorBySlug(params.slug);
 
   if (!author) return notFound();
 
-  const books = getBooksByAuthor(slug);
+  const books = getBooksByAuthor(params.slug);
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto px-4 py-8 font-mono uppercase">
-      {/* HEADER */}
       <div className="border-b-4 border-black pb-4 flex flex-col gap-2">
         <div className="flex justify-between items-baseline">
-          <span className="text-xs font-black opacity-60 tracking-widest">AUTHOR ARCHIVE</span>
-          <Link href="/" className="text-sm font-bold underline hover:bg-black hover:text-white px-1">
+          <span className="text-xs font-black opacity-60 tracking-widest">
+            AUTHOR ARCHIVE
+          </span>
+          <Link
+            href="/"
+            className="text-sm font-bold underline hover:bg-black hover:text-white px-1"
+          >
             ← BACK TO INDEX
           </Link>
         </div>
+
         <h1 className="text-4xl md:text-6xl font-black uppercase break-words">
           {author.name}
         </h1>
       </div>
 
-      {/* LIST */}
       <div className="flex flex-col border-b border-black">
-        {books.map((book) => (
+        {books.map(book => (
           <Link
             key={book.title}
             href={`/book/${getSlug(book.title)}`}
@@ -62,11 +67,4 @@ export default async function AuthorPage({ params }: Props) {
       </div>
     </div>
   );
-}
-
-export async function generateStaticParams() {
-  const authors = getAllAuthors();
-  return authors.map((author) => ({
-    slug: author.slug,
-  }));
 }
