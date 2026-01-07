@@ -1,40 +1,53 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getGenreBySlug, getBooksByGenre, getSlug, getAllGenres } from '@/lib/data';
+import {
+  getGenreBySlug,
+  getBooksByGenre,
+  getSlug,
+  getAllGenres,
+} from '@/lib/data';
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 };
 
-export default async function GenrePage({ params }: Props) {
-  // NEXT.JS 15 FIX: Await the params promise
-  const { slug } = await params;
-  
-  const genre = getGenreBySlug(slug);
+export function generateStaticParams() {
+  const genres = getAllGenres();
+  return genres.map(genre => ({
+    slug: genre.slug,
+  }));
+}
+
+export default function GenrePage({ params }: Props) {
+  const genre = getGenreBySlug(params.slug);
 
   if (!genre) return notFound();
 
-  const books = getBooksByGenre(slug);
+  const books = getBooksByGenre(params.slug);
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto px-4 py-8 font-mono uppercase">
-      {/* HEADER */}
       <div className="border-b-4 border-black pb-4 flex flex-col gap-2">
         <div className="flex justify-between items-baseline">
-          <span className="text-xs font-black opacity-60 tracking-widest">GENRE CATEGORY</span>
-          <Link href="/" className="text-sm font-bold underline hover:bg-black hover:text-white px-1">
+          <span className="text-xs font-black opacity-60 tracking-widest">
+            GENRE CATEGORY
+          </span>
+          <Link
+            href="/"
+            className="text-sm font-bold underline hover:bg-black hover:text-white px-1"
+          >
             ← BACK TO INDEX
           </Link>
         </div>
+
         <h1 className="text-4xl md:text-6xl font-black uppercase break-words">
           {genre.name}
         </h1>
       </div>
 
-      {/* LIST */}
       <div className="flex flex-col border-b border-black">
-        {books.map((book) => (
+        {books.map(book => (
           <Link
             key={book.title}
             href={`/book/${getSlug(book.title)}`}
@@ -51,17 +64,13 @@ export default async function GenrePage({ params }: Props) {
             </div>
           </Link>
         ))}
+
         {books.length === 0 && (
-          <div className="py-12 text-center font-bold opacity-50">NO RECORDS FOUND.</div>
+          <div className="py-12 text-center font-bold opacity-50">
+            NO RECORDS FOUND.
+          </div>
         )}
       </div>
     </div>
   );
-}
-
-export async function generateStaticParams() {
-  const genres = getAllGenres();
-  return genres.map((genre) => ({
-    slug: genre.slug,
-  }));
 }
