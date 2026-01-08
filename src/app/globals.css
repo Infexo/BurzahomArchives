@@ -71,38 +71,125 @@
   }
 }
 /* ---------- CUSTOM SVG CURSOR (THICK + WHITE) ---------- */
-
 :root {
-  /* PLUS */
-  --cursor-plus: url("data:image/svg+xml;utf8,\
+  /* DEFAULT PLUS cursor - BLACK */
+  --cursor-plus-black: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'>\
+<line x1='12' y1='4' x2='12' y2='20'/>\
+<line x1='4' y1='12' x2='20' y2='12'/>\
+</svg>");
+
+  --cursor-plus-white: url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'>\
 <line x1='12' y1='4' x2='12' y2='20'/>\
 <line x1='4' y1='12' x2='20' y2='12'/>\
 </svg>");
 
-  /* X */
-  --cursor-x: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'>\
-<line x1='19' y1='5' x2='5' y2='19'/>\
-<line x1='5' y1='5' x2='19' y2='19'/>\
+  /* CLICKABLE ARROW cursor - RED */
+  --cursor-arrow-red: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'>\
+<path d='M3 3 L3 17 L9 11 L13 18 L15 17 L11 10 L17 10 Z' fill='%23FF0000' stroke='%23000000' stroke-width='1'/>\
+</svg>");
+
+  /* TEXT I-BEAM cursor - RED (FIXED) */
+  --cursor-text-red: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>\
+<line x1='12' y1='2' x2='12' y2='22' stroke='%23FF0000' stroke-width='2.5' stroke-linecap='round'/>\
+<line x1='8' y1='2' x2='16' y2='2' stroke='%23FF0000' stroke-width='2.5' stroke-linecap='round'/>\
+<line x1='8' y1='22' x2='16' y2='22' stroke='%23FF0000' stroke-width='2.5' stroke-linecap='round'/>\
 </svg>");
 }
 
-/* Default: PLUS */
+/* ===== DEFAULT: BLACK PLUS ===== */
 * {
-  cursor: var(--cursor-plus) 16 16, auto;
+  cursor: var(--cursor-plus-black) 16 16, auto;
 }
 
-/* Interactive: X */
+/* ===== CLICKABLE: RED ARROW ===== */
 a,
 button,
 [role="button"],
-input,
-textarea {
-  cursor: var(--cursor-x) 16 16, pointer;
+input[type="submit"],
+input[type="button"],
+label[for] {
+  cursor: var(--cursor-arrow-red) 3 3, pointer !important;
 }
 
-/* Disable on touch devices */
+/* ===== TEXT INPUTS: RED I-BEAM (FIXED) ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+textarea,
+[contenteditable="true"] {
+  cursor: var(--cursor-text-red) 12 12, text !important;
+}
+
+/* ===== WHITE CURSORS ON BLACK BACKGROUNDS ===== */
+.hover\:bg-black:hover,
+.hover\:bg-black:hover *:not(a):not(button):not(input):not(textarea),
+.bg-black,
+.bg-black *:not(a):not(button):not(input):not(textarea) {
+  cursor: var(--cursor-plus-white) 16 16, auto;
+}
+
+/* Red arrow stays red on black */
+.hover\:bg-black:hover a,
+.hover\:bg-black:hover button,
+.hover\:bg-black:hover [role="button"],
+.bg-black a,
+.bg-black button,
+.bg-black [role="button"] {
+  cursor: var(--cursor-arrow-red) 3 3, pointer !important;
+}
+
+/* Red I-beam stays red on black */
+.hover\:bg-black:hover input,
+.hover\:bg-black:hover textarea,
+.bg-black input,
+.bg-black textarea {
+  cursor: var(--cursor-text-red) 12 12, text !important;
+}
+
+/* ===== TEXT SELECTION - RED (FIXED WITH !important) ===== */
+*::selection {
+  background-color: #FF0000 !important;
+  color: #FFFFFF !important;
+}
+
+*::-moz-selection {
+  background-color: #FF0000 !important;
+  color: #FFFFFF !important;
+}
+
+/* Target specific elements if needed */
+body ::selection {
+  background-color: #FF0000 !important;
+  color: #FFFFFF !important;
+}
+
+body ::-moz-selection {
+  background-color: #FF0000 !important;
+  color: #FFFFFF !important;
+}
+
+/* ===== FOCUSED INPUTS - RED OUTLINE ===== */
+input:focus,
+textarea:focus {
+  outline: 2px solid #FF0000 !important;
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #FF0000 !important;
+  outline-offset: 2px;
+}
+
+/* ===== DISABLE ON TOUCH DEVICES ===== */
 @media (hover: none) {
   * {
     cursor: auto !important;

@@ -8,23 +8,32 @@ import {
   getAllGenres,
 } from '@/lib/data';
 
+// 1. Updated Type for Next.js 15
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
+// 2. ✅ FIXED: Changed to false for static export
+export const dynamicParams = false;
+
+// 3. ✅ Generate all genre pages at build time
+export async function generateStaticParams() {
   const genres = getAllGenres();
   return genres.map(genre => ({
     slug: genre.slug,
   }));
 }
 
-export default function GenrePage({ params }: Props) {
-  const genre = getGenreBySlug(params.slug);
+// 4. Made the component 'async'
+export default async function GenrePage({ params }: Props) {
+  // 5. Await the params to get the slug
+  const { slug } = await params;
+  
+  const genre = getGenreBySlug(slug);
 
   if (!genre) return notFound();
 
-  const books = getBooksByGenre(params.slug);
+  const books = getBooksByGenre(slug);
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto px-4 py-8 font-mono uppercase">

@@ -5,30 +5,35 @@ import { getBookBySlug, getAllBooks, getSlug } from '@/lib/data';
 import { Metadata } from 'next';
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>; // ✅ FIXED: Made async
 };
 
+// ✅ FIXED: Made async
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = await params; // ✅ FIXED: Await params
   const book = getBookBySlug(slug);
   if (!book) return { title: 'Record Not Found' };
   return { title: `${book.title} | Burzahom Archive` };
 }
 
+// ✅ ADDED: Disable dynamic params for static export
+export const dynamicParams = false;
+
+// ✅ FIXED: Made async
 export default async function BookPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug } = await params; // ✅ FIXED: Await params
   const book = getBookBySlug(slug);
 
   if (!book) return notFound();
 
-  const relatedBooks = getAllBooks().filter(b =>
-    b.genre === book.genre &&
-    b.title !== book.title
-  ).slice(0, 3);
+  const relatedBooks = getAllBooks()
+    .filter(
+      b => b.genre === book.genre && b.title !== book.title
+    )
+    .slice(0, 3);
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto px-4 py-8 font-mono uppercase">
-
       <header className="border-b-4 border-black pb-6">
         <Link
           href="/"
@@ -77,7 +82,7 @@ export default async function BookPage({ params }: Props) {
             SIMILAR RECORDS
           </h2>
           <div className="flex flex-col">
-            {relatedBooks.map((rb) => (
+            {relatedBooks.map(rb => (
               <Link
                 key={rb.title}
                 href={`/book/${getSlug(rb.title)}`}
@@ -106,9 +111,9 @@ export default async function BookPage({ params }: Props) {
   );
 }
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   const books = getAllBooks();
-  return books.map((book) => ({
+  return books.map(book => ({
     slug: book.slug,
   }));
 }
