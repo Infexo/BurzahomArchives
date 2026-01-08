@@ -74,3 +74,23 @@ export const getBooksByAuthor = (slug: string) => {
 export const getBookBySlug = (slug: string) => {
   return getAllBooks().find(b => b.slug === slug);
 };
+// Add these to the end of src/lib/data.ts
+
+export const getAllLanguages = () => {
+  const languages = new Set(getAllBooks().map(b => b.language));
+  return Array.from(languages).sort().map(lang => ({
+    name: lang,
+    slug: getSlug(lang),
+  }));
+};
+
+export const getLanguageBySlug = (slug: string) => {
+  return getAllLanguages().find(l => l.slug === slug);
+};
+
+export const getBooksByLanguage = (slug: string) => {
+  const allBooks = getAllBooks();
+  return allBooks.filter(
+    b => getSlug(b.language) === slug
+  );
+};

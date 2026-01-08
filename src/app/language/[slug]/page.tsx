@@ -4,8 +4,11 @@ import { notFound } from 'next/navigation';
 import { getAllBooks, getSlug } from '@/lib/data';
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>; // ✅ FIXED: Made async
 };
+
+// ✅ ADDED: Disable dynamic params
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   const books = getAllBooks();
@@ -13,9 +16,12 @@ export function generateStaticParams() {
   return languages.map(slug => ({ slug }));
 }
 
-export default function LanguagePage({ params }: Props) {
+// ✅ FIXED: Made async
+export default async function LanguagePage({ params }: Props) {
+  const { slug } = await params; // ✅ FIXED: Await params
+  
   const allBooks = getAllBooks();
-  const books = allBooks.filter(b => getSlug(b.language) === params.slug);
+  const books = allBooks.filter(b => getSlug(b.language) === slug);
 
   if (books.length === 0) return notFound();
 

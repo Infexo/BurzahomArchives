@@ -2,36 +2,41 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
-  getAllAuthors,
   getAuthorBySlug,
   getBooksByAuthor,
   getSlug,
+  getAllAuthors,
 } from '@/lib/data';
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
+// ✅ FIXED: Changed to false
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
   const authors = getAllAuthors();
   return authors.map(author => ({
     slug: author.slug,
   }));
 }
 
-export default function AuthorPage({ params }: Props) {
-  const author = getAuthorBySlug(params.slug);
+export default async function AuthorPage({ params }: Props) {
+  const { slug } = await params;
+  
+  const author = getAuthorBySlug(slug);
 
   if (!author) return notFound();
 
-  const books = getBooksByAuthor(params.slug);
+  const books = getBooksByAuthor(slug);
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto px-4 py-8 font-mono uppercase">
       <div className="border-b-4 border-black pb-4 flex flex-col gap-2">
         <div className="flex justify-between items-baseline">
           <span className="text-xs font-black opacity-60 tracking-widest">
-            AUTHOR ARCHIVE
+            AUTHOR PROFILE
           </span>
           <Link
             href="/"
@@ -47,6 +52,10 @@ export default function AuthorPage({ params }: Props) {
       </div>
 
       <div className="flex flex-col border-b border-black">
+        <div className="bg-black text-white p-2 text-xs font-bold tracking-tighter">
+          BOOKS BY THIS AUTHOR ({books.length})
+        </div>
+        
         {books.map(book => (
           <Link
             key={book.title}
@@ -64,6 +73,12 @@ export default function AuthorPage({ params }: Props) {
             </div>
           </Link>
         ))}
+
+        {books.length === 0 && (
+          <div className="py-12 text-center font-bold opacity-50">
+            NO RECORDS FOUND.
+          </div>
+        )}
       </div>
     </div>
   );

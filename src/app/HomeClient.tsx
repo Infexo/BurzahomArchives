@@ -40,13 +40,10 @@ export default function HomeClient({ books, genres, authors }: HomeClientProps) 
   };
 
   return (
-    // RESTORED: No max-w constraint. font-mono is inherited from layout.
     <div className="flex flex-col gap-12 min-h-screen bg-white text-black p-4 md:p-8">
       
       {/* HERO SECTION */}
       <section className="flex flex-col py-4">
-        {/* RESTORED: text-[12vw] exactly as Google gave it. 
-            This makes the text scale massively with the screen width. */}
         <h1 className="text-[12vw] md:text-[8vw] font-black leading-[0.85] tracking-tighter">
           EVERYTHING.<br />
           KASHMIRI.<br />
@@ -60,7 +57,6 @@ export default function HomeClient({ books, genres, authors }: HomeClientProps) 
           <div key={key} className="border-t-4 border-black last:border-b-4">
             <button
               onClick={() => toggleCategory(key)}
-              // RESTORED: hover effects and full width spacing
               className="w-full flex justify-between items-center py-6 text-3xl md:text-5xl font-black hover:bg-black hover:text-white transition-colors text-left px-2"
             >
               <span>{key}</span>
@@ -92,14 +88,22 @@ export default function HomeClient({ books, genres, authors }: HomeClientProps) 
           </div>
         ))}
 
-        {/* RANDOM BUTTON */}
-        <div className="mt-12 flex">
+        {/* ACTIONS SECTION */}
+        <div className="mt-12 flex flex-wrap gap-4">
           <button 
             onClick={handleDiscover}
             className="px-4 py-2 border-4 border-black bg-black text-white hover:bg-white hover:text-black transition-colors font-black text-xl uppercase"
           >
             DISCOVER RANDOM RECORD →
           </button>
+
+          {/* NEW BUTTON ADDED HERE */}
+          <Link 
+            href="/supplementary-material"
+            className="px-4 py-2 border-4 border-black bg-white text-black hover:bg-black hover:text-white transition-colors font-black text-xl uppercase"
+          >
+            SUPPLEMENTARY MATERIAL →
+          </Link>
         </div>
       </nav>
 
